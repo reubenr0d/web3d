@@ -63,15 +63,34 @@
 
 						// model
 
-						const loader = new GLTFLoader().setPath( 'models/gltf/DamagedHelmet/glTF/' );
-						loader.load( 'DamagedHelmet.gltf', function ( gltf ) {
+						const loader = new GLTFLoader().setPath( 'models/arc/' );
+						loader.load( 'scene.gltf', function ( gltf ) {
 
 							scene.add( gltf.scene );
 
 							render();
 
-						} );
+							const box = new THREE.Box3().setFromObject(gltf.scene);
+							const size = box.getSize(new THREE.Vector3());
+							// const center = box.getCenter(new THREE.Vector3());
+							const convUnit = 0.0000000281531532;
+							const mToCood = 0.00001 / 1.11;
 
+							console.log(size.x, size.y, size.z);
+
+							const centerLatLong = new THREE.Vector3(25 * mToCood, 48.873789450367006, 2.2950495779514313);
+
+							console.log([
+								new THREE.Vector3( box.min.x, box.min.y, box.min.z ).multiplyScalar(convUnit).add(centerLatLong), // 000
+								new THREE.Vector3( box.min.x, box.min.y, box.max.z ).multiplyScalar(convUnit).add(centerLatLong), // 001
+								new THREE.Vector3( box.min.x, box.max.y, box.min.z ).multiplyScalar(convUnit).add(centerLatLong), // 010
+								new THREE.Vector3( box.min.x, box.max.y, box.max.z ).multiplyScalar(convUnit).add(centerLatLong), // 011
+								new THREE.Vector3( box.max.x, box.min.y, box.min.z ).multiplyScalar(convUnit).add(centerLatLong), // 100
+								new THREE.Vector3( box.max.x, box.min.y, box.max.z ).multiplyScalar(convUnit).add(centerLatLong), // 101
+								new THREE.Vector3( box.max.x, box.max.y, box.min.z ).multiplyScalar(convUnit).add(centerLatLong), // 110
+								new THREE.Vector3( box.max.x, box.max.y, box.max.z ).multiplyScalar(convUnit).add(centerLatLong)  // 111
+							])
+						} );
 					} );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
